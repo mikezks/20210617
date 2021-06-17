@@ -1,6 +1,9 @@
+import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { Flight } from '@flight-workspace/flight-lib';
 import { interval, merge, Observable, Subscription, timer } from 'rxjs';
-import { filter, map, share, tap } from 'rxjs/operators';
+import { debounceTime, delay, distinctUntilChanged, filter, map, share, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'flight-workspace-flight-typeahead',
@@ -11,10 +14,47 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
   timer$: Observable<number>;
   subscription: Subscription;
 
-  constructor() { }
+  control = new FormControl();
+  flights$: Observable<Flight[]>;
+  loading: boolean;
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
     // this.rxjsDemo();
+
+    // Stream 3: Flights result stream
+    this.flights$ =
+      // Stream 1: ValueChanges of Input
+      // Trigger: User enters city name
+      // Data Provider: City filter value
+      this.control.valueChanges.pipe(
+        // Filter START
+        filter(city => city.length > 2),
+        debounceTime(300),
+        distinctUntilChanged(),
+        // Filter END
+        // Side-effect: Assigns a class property
+        tap(_ => this.loading = true),
+        // Add stream: SwitchMap -> Source triggers, referenced stream is started
+        switchMap(city => this.load(city)),
+        delay(1000),
+        // Side-effect: Assigns a class property
+        tap(_ => this.loading = false)
+      );
+  }
+
+  // Stream 2: Http get request -> response
+  load(from: string): Observable<Flight[]>  {
+    const url = "http://www.angular.at/api/flight";
+
+    const params = new HttpParams()
+                        .set('from', from);
+
+    const headers = new HttpHeaders()
+                        .set('Accept', 'application/json');
+
+    return this.http.get<Flight[]>(url, {params, headers});
   }
 
   rxjsDemo(): void {
