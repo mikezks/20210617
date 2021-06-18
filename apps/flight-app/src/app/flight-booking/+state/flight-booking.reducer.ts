@@ -5,11 +5,34 @@ import * as FlightBookingActions from './flight-booking.actions';
 export const flightBookingFeatureKey = 'flightBooking';
 
 export interface State {
-  flights: Flight[]
+  flights: Flight[];
+  passenger: Record<
+    number,
+    {
+      id: number,
+      name: string,
+      firstName: string
+    }>;
+  bookings: {
+    passengerId: number,
+    flightId: number
+  }[];
+  user: {
+    name: string,
+    passengerId: number
+  };
 }
 
 export const initialState: State = {
-  flights: []
+  flights: [],
+  passenger: {
+    1: { id: 1, name: 'Smith', firstName: 'Anne' }
+  },
+  bookings: [
+    { passengerId: 1, flightId: 3 },
+    // { passengerId: 1, flightId: 5 }
+  ],
+  user: { name: 'anne.smith', passengerId: 1 }
 };
 
 
