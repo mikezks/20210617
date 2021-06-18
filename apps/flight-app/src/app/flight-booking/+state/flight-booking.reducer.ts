@@ -30,7 +30,7 @@ export const initialState: State = {
   },
   bookings: [
     { passengerId: 1, flightId: 3 },
-    // { passengerId: 1, flightId: 5 }
+    { passengerId: 1, flightId: 5 }
   ],
   user: { name: 'anne.smith', passengerId: 1 }
 };

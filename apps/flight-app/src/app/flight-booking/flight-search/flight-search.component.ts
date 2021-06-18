@@ -28,7 +28,16 @@ export class FlightSearchComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.flights$ = this.store.select(fromFlightBooking.selectActiveUserFlights);
+    // this.flights$ = this.store.select(fromFlightBooking.selectActiveUserFlights);
+    /* this.flights$ = this.store.pipe(
+      fromFlightBooking.customRxOperatorFlightsDelayed()
+    ); */
+    this.flights$ = this.store.pipe(
+      fromFlightBooking.customRxOperatorItemsByFilter(
+        fromFlightBooking.selectActiveUserFlights,
+        flights => flights.delayed === false
+      )
+    );
   }
 
   search(): void {
