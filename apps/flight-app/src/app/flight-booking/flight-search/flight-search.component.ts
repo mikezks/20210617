@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import {Component, OnInit} from '@angular/core';
-import {Flight, FlightService} from '@flight-workspace/flight-lib';
+import {Flight} from '@flight-workspace/flight-lib';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as fromFlightBooking from '../+state';
@@ -18,19 +18,13 @@ export class FlightSearchComponent implements OnInit {
   urgent = false;
   flights$: Observable<Flight[]>;
 
-  /* get flights() {
-    return this.flightService.flights;
-  } */
-
   // "shopping basket" with selected flights
   basket: { [id: number]: boolean } = {
     3: true,
     5: true
   };
 
-  constructor(
-    private flightService: FlightService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit() {
@@ -42,22 +36,15 @@ export class FlightSearchComponent implements OnInit {
   search(): void {
     if (!this.from || !this.to) return;
 
-    /* this.flightService
-      .load(this.from, this.to, this.urgent); */
-
-    this.flightService.find(this.from, this.to)
-      .subscribe(flights =>
-        this.store.dispatch(
-          fromFlightBooking.flightsLoaded({
-            flights
-          })
-        )
-      );
+    this.store.dispatch(
+      fromFlightBooking.flightsLoad({
+        from: this.from,
+        to: this.to
+      })
+    );
   }
 
   delay(flight: Flight): void {
-    // this.flightService.delay();
-
     this.store.dispatch(
       fromFlightBooking.flightsUpdate({
         flight: {
@@ -68,7 +55,6 @@ export class FlightSearchComponent implements OnInit {
       })
     );
   }
-
 }
 
 

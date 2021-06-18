@@ -74,13 +74,13 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
     // this.subscription = this.timer$.subscribe(console.log);
     const interval$ = interval(1000);
 
-    const observer = {
+    /* const observer = {
       next: (flights) => {
 
       },
       error: (err) => {},
       complete: () => {}
-    };
+    }; */
 
     merge(
       this.timer$.pipe(
@@ -99,7 +99,10 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
     ).pipe(
       // filter(state => state.type === 'stream timer'),
       map(state => state.value)
-    ).subscribe(observer);
+    ).subscribe(
+      /* observer */
+      console.log
+    );
   }
 
   ngOnDestroy(): void {
